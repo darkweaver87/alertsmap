@@ -62,6 +62,22 @@ function sortByStateAndDuration(table) {
         return this.parentNode; 
 	
     });
+}
+
+function sortByTime(table) {
+    $('#' + table).find('td').filter(function(){
+	return $(this).hasClass('sort');
+    }).sortElements(function(a, b){
+	a = parseInt($.text([a]));
+	b = parseInt($.text([b]));
+
+        if(a > b)
+            return -1;
+        return 1;
+    }, function(){
+        return this.parentNode; 
+	
+    });
 
 }
 
@@ -158,13 +174,14 @@ function refreshMap() {
 
 	// add comments
 	$.each(data[k]['comments'], function (c_i, comment) {
-	    $('#comments tbody').append('<tr class="comment' + comment['entry_type_desc'] + '"><td class="sort">' + comment['id'] + '</td><td>' + dateFormat(comment['entry_time']*1000, 'YYYY-MM-DD HH:mm:ss') + '</td><td>' + comment['host_name'] + '</td><td>' + comment['service_description'] + '</td><td>' + comment['author'] + '</td><td>' + comment['comment'] + '</td></tr>');	    
+	    $('#comments tbody').append('<tr class="comment' + comment['entry_type_desc'] + '"><td class="sort">' + comment['entry_time'] + '</td><td>' + dateFormat(comment['entry_time']*1000, 'YYYY-MM-DD HH:mm:ss') + '</td><td>' + comment['host_name'] + '</td><td>' + comment['service_description'] + '</td><td>' + comment['author'] + '</td><td>' + comment['comment'] + '</td></tr>');	    
 	});
     });
 
     // sort alerts
     sortByStateAndDuration('hostsalerts');
     sortByStateAndDuration('servicesalerts');
+    sortByTime('comments');
     
     if (markerClusterer) {
 	markerClusterer.clearMarkers();
