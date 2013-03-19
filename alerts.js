@@ -113,88 +113,98 @@ function refreshMap() {
     var infowindows = [];
     var blinkingMarker = null;
 
-    $.each(data, function(k) {
-	// add datacenter icon on the good location
-	var location =  new google.maps.LatLng(data[k]['position']['latitude'], data[k]['position']['longitude']);
-	var marker = new MarkerWithLabel({
-	    position: location,
-	    title: k + ' datacenter',
-	    map: map,
-	    icon: dc_icon,
-	    labelClass: 'markerlabels'
-	});
-
-	marker.h_critical = data[k]['hosts']['down'].length; 
-	marker.s_critical = data[k]['services']['critical'].length;
-	marker.h_total = data[k]['hosts']['down'].length + data[k]['hosts']['up'].length;  
-	marker.s_total = data[k]['services']['ok'].length + data[k]['services']['warning'].length + data[k]['services']['unknown'].length;
-
-	// add a mini table for displaying number of alerts per datacenter
-	$.each(['ok', 'critical', 'warning', 'unknown'], function (i, level) {
-	    marker.labelContent += '<div class="cell ' + level + '">' + data[k]['services'][level].length + '</div> ';
-	});
-
-	// add to alerts table
-	d = new Date();
-	$.each(['down'], function (i, level) {
-	    $.each(data[k]['hosts'][level], function (a_i, alert) {
-		last_change = new Date(alert['last_hard_state_change']*1000);
-		duration = d - last_change;
-		$('#hostsalerts tbody').append('<tr class="alert' + level + '"><td class="sort">' + i + '_' + duration + '</td><td>' + alert['host_name'] + '</td><td>' + durationToStr(duration) + '</td></tr>');
-	    });
-	});
-
-	// add the informative window
-	var infowindow = new google.maps.InfoWindow({
-	    content: '<b>' + k + '</b><br/>'
-	});
-
-	infowindows[k] = infowindow;
-
-	$.each(['critical'], function (i, level) {
-	    $.each(data[k]['services'][level], function (a_i, alert) {
-		last_change = new Date(alert['last_hard_state_change']*1000);
-		duration = d - last_change;
-		tr = $('<tr class="alert' + level + '"><td class="sort">' + i + '_' + duration + '</td><td>' + alert['host_name'] + '</td><td>' + durationToStr(duration) + '</td><td>' + alert['description'] + '</td><td>' + alert['plugin_output'] + '</td></tr>');
-		
-		tr.click(function() {
-		    infowindows[k].open(map, marker);
+    $.getJSON(scriptpath + '/data.json', function(data) {
+	$('#servicesalerts tbody').empty();
+	$('#hostsalerts tbody').empty();
+	$('#comments tbody').empty();
+	
+	if(data) {
+	    $.each(data, function(k) {
+		// add datacenter icon on the good location
+		var location =  new google.maps.LatLng(data[k]['position']['latitude'], data[k]['position']['longitude']);
+		var marker = new MarkerWithLabel({
+		    position: location,
+		    title: k + ' datacenter',
+		    map: map,
+		    icon: dc_icon,
+		    labelClass: 'markerlabels'
 		});
 		
-		$('#servicesalerts tbody').append(tr);
+		marker.h_critical = data[k]['hosts']['down'].length; 
+		marker.s_critical = data[k]['services']['critical'].length;
+		marker.h_total = data[k]['hosts']['down'].length + data[k]['hosts']['up'].length;  
+		marker.s_total = data[k]['services']['ok'].length + data[k]['services']['warning'].length + data[k]['services']['unknown'].length;
+
+		// add a mini table for displaying number of alerts per datacenter
+		$.each(['ok', 'critical', 'warning', 'unknown'], function (i, level) {
+		    marker.labelContent += '<div class="cell ' + level + '">' + data[k]['services'][level].length + '</div> ';
+		});
+
+		// add to alerts table
+		d = new Date();
+		$.each(['down'], function (i, level) {
+		    $.each(data[k]['hosts'][level], function (a_i, alert) {
+			last_change = new Date(alert['last_hard_state_change']*1000);
+			duration = d - last_change;
+			$('#hostsalerts tbody').append('<tr class="alert' + level + '"><td class="sort">' + i + '_' + duration + '</td><td>' + alert['host_name'] + '</td><td>' + durationToStr(duration) + '</td></tr>');
+		    });
+		});
+
+		// add the informative window
+		var infowindow = new google.maps.InfoWindow({
+		    content: '<b>' + k + '</b><br/>'
+		});
+
+		infowindows[k] = infowindow;
+
+		$.each(['critical'], function (i, level) {
+		    $.each(data[k]['services'][level], function (a_i, alert) {
+			last_change = new Date(alert['last_hard_state_change']*1000);
+			duration = d - last_change;
+			tr = $('<tr class="alert' + level + '"><td class="sort">' + i + '_' + duration + '</td><td>' + alert['host_name'] + '</td><td>' + durationToStr(duration) + '</td><td>' + alert['description'] + '</td><td>' + alert['plugin_output'] + '</td></tr>');
+			
+			tr.click(function() {
+			    infowindows[k].open(map, marker);
+			});
+			
+			$('#servicesalerts tbody').append(tr);
+		    });
+		});
+		
+		google.maps.event.addListener(marker, 'click', function() {
+		    infowindows[k].open(map, this);
+		});
+
+		// group markers
+		markers.push(marker);
+
+		// add comments
+		$.each(data[k]['comments'], function (c_i, comment) {
+		    $('#comments tbody').append('<tr class="comment' + comment['entry_type_desc'] + '"><td class="sort">' + comment['entry_time'] + '</td><td>' + dateFormat(comment['entry_time']*1000, 'YYYY-MM-DD HH:mm:ss') + '</td><td>' + comment['host_name'] + '</td><td>' + comment['service_description'] + '</td><td>' + comment['author'] + '</td><td>' + comment['comment'] + '</td></tr>');	    
+		});
 	    });
-	});
-	
-	google.maps.event.addListener(marker, 'click', function() {
-	    infowindows[k].open(map, this);
-	});
 
-	// group markers
-	markers.push(marker);
-
-	// add comments
-	$.each(data[k]['comments'], function (c_i, comment) {
-	    $('#comments tbody').append('<tr class="comment' + comment['entry_type_desc'] + '"><td class="sort">' + comment['entry_time'] + '</td><td>' + dateFormat(comment['entry_time']*1000, 'YYYY-MM-DD HH:mm:ss') + '</td><td>' + comment['host_name'] + '</td><td>' + comment['service_description'] + '</td><td>' + comment['author'] + '</td><td>' + comment['comment'] + '</td></tr>');	    
-	});
-    });
-
-    // sort alerts
-    sortByStateAndDuration('hostsalerts');
-    sortByStateAndDuration('servicesalerts');
-    sortByTime('comments');
-    
-    if (markerClusterer) {
-	markerClusterer.clearMarkers();
-    }
-    
-    markerClusterer = new MarkerClusterer(map, markers, {
-	minimumClusterSize: 1,
-	calculator: alerts_count,
-	maxZoom: 4,
-	styles: styles
+	    // sort alerts
+	    sortByStateAndDuration('hostsalerts');
+	    sortByStateAndDuration('servicesalerts');
+	    sortByTime('comments');
+	    
+	    if (markerClusterer) {
+		markerClusterer.clearMarkers();
+	    }
+	    
+	    markerClusterer = new MarkerClusterer(map, markers, {
+		minimumClusterSize: 1,
+		calculator: alerts_count,
+		maxZoom: 4,
+		styles: styles
+	    });
+	    
+	    daynightoverlay.setDate(new Date());
+	}
     });
     
-    daynightoverlay.setDate(new Date());
+    setTimeout(refreshMap, 10000);
 }
 
 function clearClusters(e) {
@@ -236,6 +246,9 @@ function alerts_count(markers) {
     };
 };
 
+var url = window.location.protocol + '//' + window.location.host + window.location.pathname;
+var scriptpath = url.substring(0, url.lastIndexOf('/'));
+
 var markerClusterer = null;
 var daynightoverlay = null;
 var map = null;
@@ -258,5 +271,3 @@ function initialize() {
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
-
-setTimeout('location.reload(true);', 60000);

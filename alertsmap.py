@@ -9,6 +9,7 @@ import ConfigParser
 import socket
 import re
 import traceback
+import simplejson
 
 # login methods
 def debug(string):
@@ -119,7 +120,7 @@ def generate_output(locations, output):
     debug('Generating %s' % output)
 
     f = open(output, 'w')
-    f.write('data = %s' % locations)
+    f.write(simplejson.dumps(locations))
 
     f.close()
 

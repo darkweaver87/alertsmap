@@ -14,7 +14,7 @@ Dependencies
 
 	Python >= 2.6
 	argparse >= 1.1
-
+	simplejson >= 2.1.1
 
 Installation
 ------------
