@@ -22,6 +22,7 @@ Installation
 1. cp -r alerts.js index.html images /somewhere_on_your_server/
 2. cp alertsmap.py /bin_dir_somewhere_on_your_server/
 3. edit a configuration file like the following:
+
 	; comma separated value
 	; location = latitude,longitude
 	[locations] 
