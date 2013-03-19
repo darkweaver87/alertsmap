@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <title>Alerts map</title>
+    <style> 
+      html, body {
+      margin: 0px;
+      padding: 0px;
+      width: 100%;
+      height: 100%;
+      font: 13px/22px Helvetica, Arial, sans-serif;
+      }
+
+      #alertsmap {
+      width: 65%;
+      height: 80%;
+      border: 0px;
+      }
+
+      #alertsdetails {
+      width: 35%;
+      height: 80%;
+      border: 0px;
+      background-color: #232323;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      overflow: auto;
+      }
+
+      #commentsdiv {
+      width: 100%;
+      height: 20%;
+      border: 0px;
+      background-color: #232323;
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      overflow: auto;
+      }
+
+      .markerlabels {
+      border: 1px solid #000000;
+      background-color: #131313;
+      display: table;
+      }
+
+      .markerlabels div.cell {
+      padding-right: 2px;
+      padding-left: 2px;
+      margin: 1px;
+      display: table-cell;
+      }
+
+      .markerlabels div.row {
+      color: #dedede;
+      display: table-row;
+      }
+
+      .critical {
+      font-weight: bold;
+      color: #d00005;
+      }
+
+      .warning {
+      font-weight: bold;
+      color: #dbe21d;
+      }
+
+      .unknown {
+      font-weight: bold;
+      color: #d7ac1c;
+      }
+
+
+      .pending {
+      font-weight: bold;
+      color: #2980cb;
+      }
+
+      .ok {
+      font-weight: bold;
+      color: #008c26;
+      }
+
+      .alertdown {
+      background-color: #d00005;
+      }
+
+      .alertcritical {
+      background-color: #d00005;
+      }
+
+      .alertwarning {
+      background-color: #dbe21d;
+      }
+
+      .alertunknown {
+      background-color: #d7ac1c;
+      }
+
+
+      .alertpending {
+      background-color: #2980cb;
+      }
+
+      .alertok {
+      background-color: #008c26;
+      }
+
+      .commentacknowledgment {
+      background-color: #6666ff;
+      }
+
+      .commentdowntime {
+      background-color: #8888ff;
+      }
+
+      table.alerts {
+      margin: 10px auto;
+      width: 98%;
+      border-collapse: collapse;
+      border: 1px solid #dedede;
+      table-layout: fixed;
+      }
+
+      table.alerts thead tr, table.comments thead tr {
+      background-color: #989898;
+      font-weight: bold;
+      text-align: center;
+      }
+
+      table.alerts td {
+      border: 1px solid #dedede;
+      padding: 0px 2px;
+      word-wrap: break-word;
+      }
+
+      table.comments {
+      margin: 10px auto;
+      width: 98%;
+      border-collapse: collapse;
+      border: 1px solid #dedede;
+      table-layout: fixed;
+      }
+      
+      table.comments td {
+      border: 1px solid #3333ff;
+      word-wrap: break-word;
+      }
+      
+      th.sort, td.sort { 
+      display: none;
+      }
+    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/padolsey/jQuery-Plugins/master/sortElements/jquery.sortElements.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBg2UfN73Sb18kEgkisYgU6doM65X8AqFk&sensor=false"></script>
+    <script type="text/javascript" src="https://raw.github.com/kaktus621/google-maps-api-addons/master/daynightoverlay/src/daynightoverlay.min.js"></script>
+    <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclustererplus/src/markerclusterer.js"></script>
+    <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerwithlabel/src/markerwithlabel.js"></script>
+  </head>
+  <body>
+    <div id="alertsmap"></div>
+    <div id="alertsdetails">
+      <table id="hostsalerts" class="alerts">
+	<thead>
+	  <tr>
+	    <th class="sort">Sort</th>
+	    <th>Host</th>
+	    <th>Duration</th>
+	  </tr>
+	</thead>
+	<tbody>
+	</tbody>
+      </table>
+
+      <table id="servicesalerts" class="alerts">
+	<thead>
+	  <tr>
+	    <th class="sort">Sort</th>
+	    <th style="width: 15%">Host</th>
+	    <th style="width: 15%">Duration</th>
+	    <th style="width: 25%">Service</th>
+	    <th>Output</th>
+	  </tr>
+	</thead>
+	<tbody>
+	</tbody>
+      </table>
+    </div>
+    <div id="commentsdiv">
+      <table id="comments" class="comments">
+	<thead>
+	  <tr>
+	    <th class="sort">Sort</th>
+	    <th style="width: 15%">Date</th>
+	    <th style="width: 15%">Host</th>
+	    <th style="width: 15%">Service</th>
+	    <th style="width: 15%">Author</th>
+	    <th>Comment</th>
+	  </tr>
+	</thead>
+	<tbody>
+	</tbody>
+      </table>
+    </div>
+    <script type="text/javascript" src="data.js"></script>
+    <script type="text/javascript" src="alerts.js"></script>   
+  </body>
+</html>
