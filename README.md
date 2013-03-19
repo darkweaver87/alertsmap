@@ -28,13 +28,11 @@ Installation
 [locations] 
 Paris = 39.044036,-77.48709
 Sydney = -33.880361,151.204152
-
 # comma separated value
 # location = hg=exact_host_group_matching,h=exact_host_matching,hg~regexp_host_group_matching,h~regexp_host_matching
 [locations_match]
 Sydney = hg=REALM_SYDNEY
 Paris = hg=REALM_PARIS,h~paris.*
-
 # livestatus broker modules
 # broker_name = host:port
 [brokers]
