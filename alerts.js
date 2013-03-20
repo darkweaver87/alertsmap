@@ -82,6 +82,30 @@ function sortByTime(table) {
 }
 
 
+function setBestSize(div) {
+    var divheight = $('#' + div).height();
+    var tableheight = 0;
+    $.each($('#' + div).find('table'), function() {
+	 tableheight += $(this).height();
+    });
+
+    if (tableheight > divheight) {
+	$.each($('#' + div + ' table tr td:last-child'), function() {
+	    $(this).css('overflow', 'hidden');
+	    $(this).css('white-space', 'nowrap');
+	    $(this).css('text-overflow', 'ellipsis');
+	});
+    }
+    else {
+	$.each($('#' + div + ' table tr td:last-child'), function() {
+	    $(this).css('overflow', '');
+	    $(this).css('white-space', '');
+	    $(this).css('text-overflow', '');
+	});
+    }
+}
+
+
 function refreshMap() {
     var dc_icon = { url: 'images/datacenter.png',
 		    scaledSize: new google.maps.Size(20, 32),
@@ -188,6 +212,8 @@ function refreshMap() {
 	    sortByStateAndDuration('hostsalerts');
 	    sortByStateAndDuration('servicesalerts');
 	    sortByTime('comments');
+	    setBestSize('alertsdetails');
+	    setBestSize('commentsdiv');
 	    
 	    if (markerClusterer) {
 		markerClusterer.clearMarkers();
