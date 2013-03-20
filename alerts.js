@@ -204,7 +204,9 @@ function refreshMap() {
 
 		// add comments
 		$.each(data[k]['comments'], function (c_i, comment) {
-		    $('#comments tbody').append('<tr class="comment' + comment['entry_type_desc'] + '"><td class="sort">' + comment['entry_time'] + '</td><td>' + dateFormat(comment['entry_time']*1000, 'YYYY-MM-DD HH:mm:ss') + '</td><td>' + comment['host_name'] + '</td><td>' + comment['service_description'] + '</td><td>' + comment['author'] + '</td><td>' + comment['comment'] + '</td></tr>');	    
+		    if (comment['entry_type'] == 2 || comment['entry_type'] == 4) {
+			$('#comments tbody').append('<tr class="comment' + comment['entry_type_desc'] + '"><td class="sort">' + comment['entry_time'] + '</td><td>' + dateFormat(comment['entry_time']*1000, 'YYYY-MM-DD HH:mm:ss') + '</td><td>' + comment['host_name'] + '</td><td>' + comment['service_description'] + '</td><td>' + comment['author'] + '</td><td>' + comment['comment'] + '</td></tr>')
+		    }
 		});
 	    });
 

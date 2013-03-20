@@ -213,8 +213,11 @@ def main():
                 locate_host(locations, 'hosts', j)
 
             for j in livestatus[i[0]].query('GET comments\nFilter: entry_time > %d' % time.mktime((datetime.now() - timedelta(days=1)).timetuple()), 'id comment author entry_type host_name host_groups service_description entry_time'):
-                if int(j['entry_type']) == 3:
+                if int(j['entry_type']) == 2:
                     j['entry_type_desc'] = 'downtime'
+
+                if int(j['entry_type']) == 3:
+                    j['entry_type_desc'] = 'flapping'
 
                 if int(j['entry_type']) == 4:
                     j['entry_type_desc'] = 'acknowledgment'
