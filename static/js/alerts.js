@@ -107,28 +107,28 @@ function setBestSize(div) {
 
 
 function refreshMap() {
-    var dc_icon = { url: 'images/datacenter.png',
+    var dc_icon = { url: 'static/images/datacenter.png',
 		    scaledSize: new google.maps.Size(20, 32),
 		  }
 
     var styles = [
 	{
-            url: 'images/m1.png',
+            url: 'static/images/m1.png',
 	    height: 53,
             width: 52,
 	}, 
 	{
-            url: 'images/m2.png',
+            url: 'static/images/m2.png',
 	    height: 56,
             width: 55,
 	}, 
 	{
-            url: 'images/m3.png',
+            url: 'static/images/m3.png',
 	    height: 66,
             width: 65,
 	},
 	{
-            url: 'images/m4.png',
+            url: 'static/images/m4.png',
 	    height: 78,
             width: 77,
 	}];
