@@ -22,10 +22,9 @@ Installation
 1. cp -r alerts.js index.html images /somewhere_on_your_server/
 2. cp alertsmap.py /bin_dir_somewhere_on_your_server/
 3. edit a configuration file like the following the one in docs/alertmaps.sample.conf
-4. Edit the index.html and add you own google api access key (replace __YOUR__GOOGGLE_API_KEY_HERE__) (cf. https://developers.google.com/maps/documentation/javascript/tutorial?hl=fr#api_key)
-5. setup a cronjob like this one:
+4. setup a cronjob like this one:
 
-	* * * * * root python /bin_dir_somewhere_on_your_server/alertsmap.py --conf /somewhere_on_your_server/alertsmap.conf --output /somewhere_on_your_server/data.js > /dev/null 2>&1
+	* * * * * root python /bin_dir_somewhere_on_your_server/alertsmap.py --conf /somewhere_on_your_server/alertsmap.conf --output /somewhere_on_your_server/data.json > /dev/null 2>&1
 
 
 Screenshot
