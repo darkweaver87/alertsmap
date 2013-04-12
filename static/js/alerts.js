@@ -283,9 +283,9 @@ var map = null;
 
 function initialize() {
     var mapOptions = {
-        center: new google.maps.LatLng(25, -0.582085),
+        center: new google.maps.LatLng(config['center']['latitude'], config['center']['longitude']),
 	//center: new google.maps.LatLng(25, 100),
-	zoom: 2,
+	zoom: config['zoom'],
 	mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 

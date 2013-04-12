@@ -25,6 +25,7 @@ Installation
 4. setup a cronjob like this one:
 
 	* * * * * root python /bin_dir_somewhere_on_your_server/alertsmap.py --conf /somewhere_on_your_server/alertsmap.conf --output /somewhere_on_your_server/data.json > /dev/null 2>&1
+5. edit /somewhere_on_your_server/config.js and modify the parameters according to what you want to display
 
 
 Screenshot

@@ -206,23 +206,28 @@ def main():
 
         # retrieve all stats of all brokers
         for i in config.items('brokers'):
-            for j in livestatus[i[0]].query('GET services\nFilter: scheduled_downtime_depth = 0\nFilter: host_scheduled_downtime_depth = 0\nFilter: acknowledged = 0\nFilter: host_acknowledged = 0\nFilter: service_acknowledged = 0\nFilter: notifications_enabled = 1\nFilter: state_type = 1', 'host_name last_hard_state_change description plugin_output state comments_with_info host_comments_with_info host_groups'):
+            try:
+                for j in livestatus[i[0]].query('GET services\nFilter: scheduled_downtime_depth = 0\nFilter: host_scheduled_downtime_depth = 0\nFilter: acknowledged = 0\nFilter: host_acknowledged = 0\nFilter: service_acknowledged = 0\nFilter: notifications_enabled = 1\nFilter: state_type = 1', 'host_name last_hard_state_change description plugin_output state comments_with_info host_comments_with_info host_groups'):
                 locate_host(locations, 'services', j)
 
-            for j in livestatus[i[0]].query('GET hosts\nFilter: scheduled_downtime_depth = 0\nFilter: host_scheduled_downtime_depth = 0\nFilter: acknowledged = 0\nFilter: host_acknowledged = 0\nFilter: state_type = 1', 'host_name last_hard_state_change state host_groups'):
+                for j in livestatus[i[0]].query('GET hosts\nFilter: scheduled_downtime_depth = 0\nFilter: host_scheduled_downtime_depth = 0\nFilter: acknowledged = 0\nFilter: host_acknowledged = 0\nFilter: state_type = 1', 'host_name last_hard_state_change state host_groups'):
                 locate_host(locations, 'hosts', j)
+                
+                for j in livestatus[i[0]].query('GET comments\nFilter: entry_time > %d' % time.mktime((datetime.now() - timedelta(days=1)).timetuple()), 'id comment author entry_type host_name host_groups service_description entry_time'):
+                    if int(j['entry_type']) == 2:
+                        j['entry_type_desc'] = 'downtime'
 
-            for j in livestatus[i[0]].query('GET comments\nFilter: entry_time > %d' % time.mktime((datetime.now() - timedelta(days=1)).timetuple()), 'id comment author entry_type host_name host_groups service_description entry_time'):
-                if int(j['entry_type']) == 2:
-                    j['entry_type_desc'] = 'downtime'
+                    if int(j['entry_type']) == 3:
+                        j['entry_type_desc'] = 'flapping'
 
-                if int(j['entry_type']) == 3:
-                    j['entry_type_desc'] = 'flapping'
-
-                if int(j['entry_type']) == 4:
-                    j['entry_type_desc'] = 'acknowledgment'
+                    if int(j['entry_type']) == 4:
+                        j['entry_type_desc'] = 'acknowledgment'
                     
-                locate_host(locations, 'comments', j, True)
+                    locate_host(locations, 'comments', j, True)
+            except:
+                e = sys.exc_info()
+                error('An error occured on broker %s: %s' % (i[1].split(':')[0], str(e)))
+                del locations[i]
                                 
         generate_output(locations, args.output[0])
 
