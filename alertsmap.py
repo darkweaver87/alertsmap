@@ -113,6 +113,15 @@ def locate_host(locations, type, h, comment = False):
                         locations[l][type][NAGIOS_STATES[type][h['state']]].append(h)
                     return
 
+    # try to find the default
+    for l in locations:
+        if locations[l]['default']:
+            if comment:
+                locations[l]['comments'].append(h)
+            else:
+                locations[l][type][NAGIOS_STATES[type][h['state']]].append(h)
+                return
+
     debug('not matched: %s' % h)
 
 # generate HTML file
@@ -153,6 +162,7 @@ def main():
         for i in config.items('locations'):
             if i[0] not in locations: 
                 locations[i[0]] = {}
+                locations[i[0]]['default'] = False
                 locations[i[0]]['hg_equal'] = []
                 locations[i[0]]['hg_match'] = []
                 locations[i[0]]['h_equal'] = []
@@ -196,6 +206,10 @@ def main():
                 if m:
                     matched = True
                     locations[i[0]]['h_match'].append(m.group('h'))
+
+                if item == 'default':
+                    matched = True
+                    locations[i[0]]['default'] = True
 
                 if not matched:
                     raise Exception('Invalid pattern for locations_match \'%s\'' % i[0])
